@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/processor")
-@CrossOrigin(origins = "http://tvoj-frontend-host.com") // zamijeni s URL-om frontenda
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProcessorController {
     private final ProcessorServiceImpl processorService;
 

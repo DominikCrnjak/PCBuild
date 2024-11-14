@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/case")
-@CrossOrigin(origins = "http://tvoj-frontend-host.com") // zamijeni s URL-om frontenda
+@CrossOrigin(origins = "http://localhost:3000")
 public class CaseController {
     private final CaseServiceImpl caseService;
 
