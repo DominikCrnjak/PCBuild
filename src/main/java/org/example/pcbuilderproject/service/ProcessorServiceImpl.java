@@ -12,21 +12,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class ProcessorServiceImpl implements ProcessorService{
     private final ProcessorRepository processorRepository;
 
-
+    public ProcessorServiceImpl(ProcessorRepository processorRepository) {
+        this.processorRepository = processorRepository;
+    }
     @Override
     public List<ProcessorDTO> getAllProcessors() {
         return processorRepository.findAll()
                 .stream()
-                .map(ProcessorMapper::mapToProcessorDTO)  // Mapiraj entitet u DTO koristeći mapper
+                .map(ProcessorMapper::mapToProcessorDTO)
                 .collect(Collectors.toList());
     }
     @Override
     public ProcessorDTO getProcessorById(Long id) {
-        return processorRepository.findById(id).map(ProcessorMapper::mapToProcessorDTO).orElseThrow(() -> new ResourceNotFoundException("Processor not found"));
+        return processorRepository.findById(id)
+                .map(ProcessorMapper::mapToProcessorDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Processor not found"));
     }
     @Override
     public ProcessorDTO createProcessor(ProcessorDTO processordto) {
