@@ -43,6 +43,7 @@ public class AuthenticationService {
 
         var sessionDto = new SessionDTO(
                 user.getId(),
+                user.getRole().name(),
                 accessToken,
                 refreshToken,
                 "Bearer",
@@ -87,6 +88,7 @@ public class AuthenticationService {
 
         var sessionDto = new SessionDTO(
                 user.getId(),
+                user.getRole().name(),
                 accessToken,
                 refreshToken,
                 "Bearer",
