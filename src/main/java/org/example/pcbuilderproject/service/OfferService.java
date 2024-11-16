@@ -10,6 +10,7 @@ public interface OfferService {
     Offer getOfferById(Long id);
 
     Offer createOffer(Offer offer);
+    List<Offer> getOfferByUserId(Long userId);
 
     void deleteOffer(Long id);
 }

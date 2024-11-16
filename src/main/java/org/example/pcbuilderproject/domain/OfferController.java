@@ -8,19 +8,22 @@ import org.example.pcbuilderproject.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/offers")
+@RequestMapping("/api/offers")
+@CrossOrigin(origins = "http://localhost:3000")
 public class OfferController {
 
     @Autowired
     private OfferRepository offerRepository;
+
+    @Autowired
+    private UserHasOfferRepository userOfferRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -55,13 +58,28 @@ public class OfferController {
     @Autowired
     private PowerSupplyServiceImpl powerSupplyService;
 
+    @GetMapping
+    public ResponseEntity<List<Offer>> getAllOffers() {
+        List<Offer> offers = offerRepository.findAll();
+        return ResponseEntity.ok(offers);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Offer>> getOffersByUserId(@PathVariable Long userId) {
+        List<Offer> offers = offerRepository.findAll().stream()
+                .filter(offer -> offer.getUserId().equals(userId)) // Filtriraj prema userId
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(offers);
+    }
+
     @PostMapping
     public ResponseEntity<String> createOffer(@RequestBody OfferRequest request) {
         // dohvaćanje korisnika iz sesije (SecurityContextHolder)
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        System.out.println(username);
         // dohvaćanje korisnika iz baze
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // kreiraj novi PC
@@ -90,6 +108,7 @@ public class OfferController {
         offer.setCreate_date(LocalDate.now().toString()); // automatski postavi datum
         offer.setStatus("pending");
         offer.setPcId(pc.getId());
+        offer.setUserId(user.getId());
         offer = offerRepository.save(offer);
 
         // poveži offer s korisnikom
@@ -102,9 +121,32 @@ public class OfferController {
         // poveži offer s PC-om
         OfferHasPC offerHasPc = new OfferHasPC();
         offerHasPc.setOfferId(offer.getId());
-        offerHasPc.setPCId(pc.getId());
+        offerHasPc.setPcId(pc.getId());
         offerHasPcRepository.save(offerHasPc);
 
         return ResponseEntity.ok("Offer with PC created successfully");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteOffer(@PathVariable Long id) {
+        offerRepository.deleteById(id);
+        return ResponseEntity.ok("Offer deleted successfully");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Offer> updateOffer(@PathVariable Long id, @RequestBody Offer updatedOffer) {
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Offer not found"));
+
+        offer.setName(updatedOffer.getName());
+        offer.setCustomer_name(updatedOffer.getCustomer_name());
+        offer.setCustomer_address(updatedOffer.getCustomer_address());
+        offer.setCustomer_email(updatedOffer.getCustomer_email());
+        offer.setPhone_number(updatedOffer.getPhone_number());
+        offer.setCreate_date(updatedOffer.getCreate_date());
+        offer.setStatus(updatedOffer.getStatus());
+
+        offerRepository.save(offer);
+        return ResponseEntity.ok(offer);
     }
 }

@@ -44,11 +44,5 @@ public class PC {
     @JoinColumn(name = "power_supply", referencedColumnName = "id")
     private PowerSupply powerSupply;
 
-    @ManyToMany
-    @JoinTable(
-            name = "offer_has_pc",
-            joinColumns = @JoinColumn(name = "pc_id"),
-            inverseJoinColumns = @JoinColumn(name = "offer_id")
-    )
-    private List<Offer> offers;
+
 }

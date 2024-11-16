@@ -7,6 +7,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "offers")
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +29,7 @@ public class Offer {
 
     private Long pcId;
 
+    private Long userId;
 
 
 }

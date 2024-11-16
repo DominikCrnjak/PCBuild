@@ -39,7 +39,8 @@ public class AuthenticationService {
                 user.getLastname(),
                 user.getPhoneNumber(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRole().name(),
+                false
         );
 
         var sessionDto = new SessionDTO(
@@ -84,7 +85,8 @@ public class AuthenticationService {
                 user.getLastname(),
                 user.getPhoneNumber(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRole().name(),
+                false
         );
 
         var sessionDto = new SessionDTO(

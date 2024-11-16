@@ -21,4 +21,20 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public User updateUser(Long id, UserDTO userDTO) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setUsername(userDTO.getUsername());
+        user.setFirstname(userDTO.getFirstname());
+        user.setLastname(userDTO.getLastname());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setEmail(userDTO.getEmail());
+        user.setRole(Role.valueOf(userDTO.getRole()));
+        user.setEnabled(userDTO.isEnabled());
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 }
