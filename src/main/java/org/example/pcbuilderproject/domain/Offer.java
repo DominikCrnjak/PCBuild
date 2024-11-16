@@ -12,6 +12,8 @@ public class Offer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     private String customer_name;
 
     private String customer_address;
@@ -24,13 +26,7 @@ public class Offer {
 
     private String status;
 
-    @ManyToMany
-    @JoinTable(
-            name = "offer_has_pc",
-            joinColumns = @JoinColumn(name = "offer_id"),
-            inverseJoinColumns = @JoinColumn(name = "pc_id")
-    )
-    private List<PC> pcs;
+    private Long pcId;
 
 
 

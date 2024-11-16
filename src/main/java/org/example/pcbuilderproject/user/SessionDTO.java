@@ -7,7 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SessionDTO {
     private Long userID;
-    private String userRole;
     private String accessToken;
     private String refreshToken;
     private String tokenType = "Bearer";

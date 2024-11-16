@@ -38,12 +38,12 @@ public class AuthenticationService {
                 user.getFirstname(),
                 user.getLastname(),
                 user.getPhoneNumber(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole().name()
         );
 
         var sessionDto = new SessionDTO(
                 user.getId(),
-                user.getRole().name(),
                 accessToken,
                 refreshToken,
                 "Bearer",
@@ -83,12 +83,12 @@ public class AuthenticationService {
                 user.getFirstname(),
                 user.getLastname(),
                 user.getPhoneNumber(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole().name()
         );
 
         var sessionDto = new SessionDTO(
                 user.getId(),
-                user.getRole().name(),
                 accessToken,
                 refreshToken,
                 "Bearer",
