@@ -58,6 +58,8 @@ public class PCController {
         return ResponseEntity.ok(pc);
     }
 
+
+
     // Delete PC
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePC(@PathVariable Long id) {

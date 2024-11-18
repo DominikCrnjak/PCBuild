@@ -1,17 +1,23 @@
 package org.example.pcbuilderproject.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pcbuilderproject.mapper.*;
 import org.example.pcbuilderproject.repository.*;
 import org.example.pcbuilderproject.service.*;
 import org.example.pcbuilderproject.user.User;
 import org.example.pcbuilderproject.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,19 +29,13 @@ public class OfferController {
     private OfferRepository offerRepository;
 
     @Autowired
-    private UserHasOfferRepository userOfferRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PCRepository pcRepository;
 
     @Autowired
-    private UserHasOfferRepository userHasOfferRepository;
-
-    @Autowired
-    private OfferHasPcRepository offerHasPcRepository;
+    private CustomPCRepository customPCRepository;
 
     @Autowired
     private CaseServiceImpl caseService;
@@ -64,7 +64,14 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{id}")
+    public ResponseEntity<Offer> getOfferById(@PathVariable Long id) {
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Offer not found"));
+        return ResponseEntity.ok(offer);
+    }
+
+    @GetMapping("/byuser/{userId}")
     public ResponseEntity<List<Offer>> getOffersByUserId(@PathVariable Long userId) {
         List<Offer> offers = offerRepository.findAll().stream()
                 .filter(offer -> offer.getUserId().equals(userId)) // Filtriraj prema userId
@@ -73,7 +80,7 @@ public class OfferController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOffer(@RequestBody OfferRequest request) {
+    public ResponseEntity<Offer> createOffer(@RequestBody CreateOfferRequest request) {
         // dohvaćanje korisnika iz sesije (SecurityContextHolder)
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -82,50 +89,63 @@ public class OfferController {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // kreiraj novi PC
-        PC pc = new PC();
-        pc.setName(request.getName());
-
-        // Dohvaćanje i postavljanje komponenti
-        pc.setProcessor(ProcessorMapper.mapToProcessor(processorService.getProcessorById(request.getProcessorId())));
-        pc.setMotherboard(MotherboardMapper.mapToMotherboard(motherboardService.getMotherboardById(request.getMotherboardId())));
-        pc.setGraphicsCard(GraphicsCardMapper.mapToGraphicsCard(graphicsCardService.getGraphicsCardById(request.getGraphicsCardId())));
-        pc.setMemory(MemoryMapper.mapToMemory(memoryService.getMemoryById(request.getMemoryId())));
-        pc.setStorage(StorageMapper.mapToStorage(storageService.getStorageById(request.getStorageId())));
-        pc.setCaseEntity(CaseMapper.mapToCase(caseService.getCaseById(request.getPcCaseId())));
-        pc.setPowerSupply(PowerSupplyMapper.mapToPowerSupply(powerSupplyService.getPowerSupplyById(request.getPowerSupplyId())));
-        // Spremanje PC-a u bazu
-        pcRepository.save(pc);
-
+        List<CustomPC> customPcs = new ArrayList<>();
 
         // kreiraj novi offer
         Offer offer = new Offer();
-        offer.setName(user.getUsername() + "-" + pc.getName());
-        offer.setCustomer_name(user.getFirstname() + " " + user.getLastname());
-        offer.setCustomer_address("Ulica 12");
-        offer.setCustomer_email(user.getEmail());
-        offer.setPhone_number(user.getPhoneNumber());
-        offer.setCreate_date(LocalDate.now().toString()); // automatski postavi datum
+        offer.setCustomer_name(request.getCustomerName());
+        offer.setCustomer_address(request.getCustomerAddress());
+        offer.setCustomer_email(request.getEmail());
+        offer.setPhone_number(request.getPhoneNumber());
+        offer.setCreateDate(LocalDate.now().toString()); // automatski postavi datum
         offer.setStatus("pending");
-        offer.setPcId(pc.getId());
         offer.setUserId(user.getId());
-        offer = offerRepository.save(offer);
+        List<PC> pcs = pcRepository.findAllById(request.getPcIds());
+        offer.setPcs(pcs);
 
-        // poveži offer s korisnikom
-        UserHasOffer userHasOffer = new UserHasOffer();
-        userHasOffer.setUserId(user.getId());
-        userHasOffer.setOfferId(offer.getId());
 
-        userHasOfferRepository.save(userHasOffer);
+        if (request.getCustomPcs() != null && !request.getCustomPcs().isEmpty()) {
+            for (CustomPCRequest customPCRequest : request.getCustomPcs()) {
+                CustomPC customPC = new CustomPC();
 
-        // poveži offer s PC-om
-        OfferHasPC offerHasPc = new OfferHasPC();
-        offerHasPc.setOfferId(offer.getId());
-        offerHasPc.setPcId(pc.getId());
-        offerHasPcRepository.save(offerHasPc);
+                customPC.setProcessor(ProcessorMapper.mapToProcessor(processorService.getProcessorById(customPCRequest.getCpuId())));
+                customPC.setMotherboard(MotherboardMapper.mapToMotherboard(motherboardService.getMotherboardById(customPCRequest.getMotherboardId())));
+                customPC.setMemory(MemoryMapper.mapToMemory(memoryService.getMemoryById(customPCRequest.getRamId())));
+                customPC.setGraphicsCard(GraphicsCardMapper.mapToGraphicsCard(graphicsCardService.getGraphicsCardById(customPCRequest.getGpuId())));
+                customPC.setCaseEntity(CaseMapper.mapToCase(caseService.getCaseById(customPCRequest.getPcCaseId())));
+                customPC.setPowerSupply(PowerSupplyMapper.mapToPowerSupply(powerSupplyService.getPowerSupplyById(customPCRequest.getPowerSupplyId())));
+                customPC.setStorage(StorageMapper.mapToStorage(storageService.getStorageById(customPCRequest.getStorageId())));
 
-        return ResponseEntity.ok("Offer with PC created successfully");
+
+                Long totalPrice = (long) (
+                        customPC.getProcessor().getPrice() +
+                                customPC.getMotherboard().getPrice() +
+                                customPC.getMemory().getPrice() +
+                                customPC.getGraphicsCard().getPrice() +
+                                customPC.getCaseEntity().getPrice() +
+                                customPC.getPowerSupply().getPrice() +
+                                customPC.getStorage().getPrice()
+                );
+
+                // Set the total price to the custom PC
+                customPC.setPrice(totalPrice);
+
+                // Dodaj custom PC u listu
+                customPcs.add(customPC);
+                customPCRepository.save(customPC);
+            }
+        }
+
+            // Postavi custom PC listu u Offer (ne treba JSON serijalizacija)
+            offer.setCustomPcs(customPcs);
+
+
+        offerRepository.save(offer);
+
+        return ResponseEntity.ok(offer);
     }
+
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOffer(@PathVariable Long id) {
@@ -138,12 +158,10 @@ public class OfferController {
         Offer offer = offerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Offer not found"));
 
-        offer.setName(updatedOffer.getName());
         offer.setCustomer_name(updatedOffer.getCustomer_name());
         offer.setCustomer_address(updatedOffer.getCustomer_address());
         offer.setCustomer_email(updatedOffer.getCustomer_email());
         offer.setPhone_number(updatedOffer.getPhone_number());
-        offer.setCreate_date(updatedOffer.getCreate_date());
         offer.setStatus(updatedOffer.getStatus());
 
         offerRepository.save(offer);

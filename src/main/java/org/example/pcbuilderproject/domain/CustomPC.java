@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.example.pcbuilderproject.domainComponents.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
-public class PC {
+@Table(name = "custompc")
+public class CustomPC {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +45,4 @@ public class PC {
     @ManyToOne
     @JoinColumn(name = "power_supply", referencedColumnName = "id")
     private PowerSupply powerSupply;
-
-
-
 }
