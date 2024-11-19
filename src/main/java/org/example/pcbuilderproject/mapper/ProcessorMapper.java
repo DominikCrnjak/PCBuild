@@ -1,7 +1,7 @@
 package org.example.pcbuilderproject.mapper;
 
-import org.example.pcbuilderproject.domainComponents.Processor;
-import org.example.pcbuilderproject.domainComponents.ProcessorDTO;
+import org.example.pcbuilderproject.componentsDomain.Processor;
+import org.example.pcbuilderproject.componentsDomain.ProcessorDTO;
 
 public class ProcessorMapper {
 

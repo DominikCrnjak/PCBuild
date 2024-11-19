@@ -1,7 +1,7 @@
 package org.example.pcbuilderproject.mapper;
 
-import org.example.pcbuilderproject.domainComponents.Storage;
-import org.example.pcbuilderproject.domainComponents.StorageDTO;
+import org.example.pcbuilderproject.componentsDomain.Storage;
+import org.example.pcbuilderproject.componentsDomain.StorageDTO;
 
 public class StorageMapper {
 

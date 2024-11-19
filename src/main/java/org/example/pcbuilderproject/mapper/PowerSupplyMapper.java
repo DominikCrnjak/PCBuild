@@ -1,7 +1,7 @@
 package org.example.pcbuilderproject.mapper;
 
-import org.example.pcbuilderproject.domainComponents.PowerSupply;
-import org.example.pcbuilderproject.domainComponents.PowerSupplyDTO;
+import org.example.pcbuilderproject.componentsDomain.PowerSupply;
+import org.example.pcbuilderproject.componentsDomain.PowerSupplyDTO;
 
 public class PowerSupplyMapper {
 

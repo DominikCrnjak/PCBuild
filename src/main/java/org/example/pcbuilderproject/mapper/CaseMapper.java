@@ -1,8 +1,8 @@
 package org.example.pcbuilderproject.mapper;
 
 
-import org.example.pcbuilderproject.domainComponents.Case;
-import org.example.pcbuilderproject.domainComponents.CaseDTO;
+import org.example.pcbuilderproject.componentsDomain.Case;
+import org.example.pcbuilderproject.componentsDomain.CaseDTO;
 
 public class CaseMapper {
 

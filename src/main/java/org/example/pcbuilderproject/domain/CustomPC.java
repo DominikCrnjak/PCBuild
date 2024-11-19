@@ -1,8 +1,7 @@
 package org.example.pcbuilderproject.domain;
 
-import jakarta.persistence.*;
 import lombok.Data;
-import org.example.pcbuilderproject.domainComponents.*;
+import org.example.pcbuilderproject.componentsDomain.*;
 
 
 

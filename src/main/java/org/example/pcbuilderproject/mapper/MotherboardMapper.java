@@ -1,7 +1,7 @@
 package org.example.pcbuilderproject.mapper;
 
-import org.example.pcbuilderproject.domainComponents.Motherboard;
-import org.example.pcbuilderproject.domainComponents.MotherboardDTO;
+import org.example.pcbuilderproject.componentsDomain.Motherboard;
+import org.example.pcbuilderproject.componentsDomain.MotherboardDTO;
 
 public class MotherboardMapper {
 

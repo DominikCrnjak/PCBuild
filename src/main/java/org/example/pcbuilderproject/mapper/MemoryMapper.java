@@ -1,7 +1,7 @@
 package org.example.pcbuilderproject.mapper;
 
-import org.example.pcbuilderproject.domainComponents.Memory;
-import org.example.pcbuilderproject.domainComponents.MemoryDTO;
+import org.example.pcbuilderproject.componentsDomain.Memory;
+import org.example.pcbuilderproject.componentsDomain.MemoryDTO;
 
 public class MemoryMapper {
 

@@ -1,8 +1,8 @@
 package org.example.pcbuilderproject.mapper;
 
 
-import org.example.pcbuilderproject.domainComponents.GraphicsCard;
-import org.example.pcbuilderproject.domainComponents.GraphicsCardDTO;
+import org.example.pcbuilderproject.componentsDomain.GraphicsCard;
+import org.example.pcbuilderproject.componentsDomain.GraphicsCardDTO;
 
 public class GraphicsCardMapper {
 

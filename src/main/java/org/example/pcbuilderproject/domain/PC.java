@@ -2,12 +2,7 @@ package org.example.pcbuilderproject.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.example.pcbuilderproject.domainComponents.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.example.pcbuilderproject.componentsDomain.*;
 
 @Entity
 @Data
