@@ -170,13 +170,27 @@ public class OfferController {
         Offer offer = offerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Offer not found"));
 
-        offer.setCustomer_name(updatedOfferResponse.getCustomerName());
-        offer.setCustomer_address(updatedOfferResponse.getCustomerAddress());
-        offer.setCustomer_email(updatedOfferResponse.getEmail());
-        offer.setCustomer_city(updatedOfferResponse.getCity());
-        offer.setPhone_number(updatedOfferResponse.getPhoneNumber());
-        offer.setStatus(updatedOfferResponse.getStatus());
-        offer.setPrice(updatedOfferResponse.getPrice());
+        if (updatedOfferResponse.getCustomerName() != null) {
+            offer.setCustomer_name(updatedOfferResponse.getCustomerName());
+        }
+        if (updatedOfferResponse.getCustomerAddress() != null) {
+            offer.setCustomer_address(updatedOfferResponse.getCustomerAddress());
+        }
+        if (updatedOfferResponse.getEmail() != null) {
+            offer.setCustomer_email(updatedOfferResponse.getEmail());
+        }
+        if (updatedOfferResponse.getCity() != null) {
+            offer.setCustomer_city(updatedOfferResponse.getCity());
+        }
+        if (updatedOfferResponse.getPhoneNumber() != null) {
+            offer.setPhone_number(updatedOfferResponse.getPhoneNumber());
+        }
+        if (updatedOfferResponse.getStatus() != null) {
+            offer.setStatus(updatedOfferResponse.getStatus());
+        }
+        if (updatedOfferResponse.getPrice() != null) {
+            offer.setPrice(updatedOfferResponse.getPrice());
+        }
         List<PC> pcs = updatedOfferResponse.getPcs();
         offer.setPcs(pcs);
 
