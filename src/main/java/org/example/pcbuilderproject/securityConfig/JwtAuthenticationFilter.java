@@ -24,41 +24,56 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService  jwtService;
+    private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-
+    /**
+     * Filtrira dolazne HTTP zahtjeve i provjerava JWT token.
+     * @param request HTTP zahtjev.
+     * @param response HTTP odgovor.
+     * @param filterChain Lanac filtera.
+     * @throws ServletException Ako dođe do greške u servisu.
+     * @throws IOException Ako dođe do I/O greške.
+     */
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader= request.getHeader("Authorization");
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
 
-        if(authHeader ==null||!authHeader.startsWith("Bearer")){
-            filterChain.doFilter(request,response);
+        // Provjeri je li Authorization header prisutan i počinje li s "Bearer"
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        jwt= authHeader.substring(7);
+        // Izvuci JWT token iz Authorization headera
+        jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        if(userEmail!=null&& SecurityContextHolder.getContext().getAuthentication()==null){
+        // Provjeri je li korisničko ime prisutno i je li korisnik već autentificiran
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            if(jwtService.isTokenValid(jwt,userDetails)){
-                List<String> roles = jwtService.extractRoles(jwt); // Dodaj ovu metodu u JwtService
+            // Provjeri je li JWT token valjan
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                // Izvuci uloge iz JWT tokena
+                List<String> roles = jwtService.extractRoles(jwt);
                 List<GrantedAuthority> authorities = roles.stream()
-                        .map(SimpleGrantedAuthority::new) // Pretpostavlja da uloge već sadrže prefiks ROLE_
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
+                // Kreiraj autentifikacijski token
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+                // Postavi autentifikacijski token u SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-
         }
-        filterChain.doFilter(request,response);
+
+        // Nastavi s lancem filtera
+        filterChain.doFilter(request, response);
     }
 }

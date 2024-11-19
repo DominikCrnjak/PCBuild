@@ -132,6 +132,7 @@ public class OfferController {
         offer.setCustomer_email(request.getEmail());
         offer.setCustomer_city(request.getCity());
         offer.setPhone_number(request.getPhoneNumber());
+        offer.setPrice(request.getPrice());
         offer.setCreateDate(LocalDate.now().toString()); // automatski postavi datum
         offer.setStatus("pending");
         offer.setUserId(user.getId());

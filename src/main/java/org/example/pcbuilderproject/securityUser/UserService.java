@@ -1,5 +1,6 @@
 package org.example.pcbuilderproject.securityUser;
 
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,10 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void enableUser(Long id) {
+        userRepository.enableUserById(id);
     }
 }

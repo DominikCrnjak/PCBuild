@@ -52,4 +52,10 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/enable")
+    public ResponseEntity<String> enableUser(@PathVariable Long id) {
+        userService.enableUser(id);
+        return ResponseEntity.ok("User enabled successfully");
+    }
 }
