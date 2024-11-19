@@ -12,5 +12,5 @@ public class DashboardDataResponse {
     private long offersDone;
     private long offersPending;
     private long offersRejected;
-    private List<Offer> lastOffers;
+    private List<OfferResponse> lastOffers;
 }

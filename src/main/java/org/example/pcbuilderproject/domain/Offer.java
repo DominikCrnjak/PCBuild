@@ -3,6 +3,7 @@ package org.example.pcbuilderproject.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +44,11 @@ public class Offer {
     )
     private List<PC> pcs = new ArrayList<>();
 
+    @Column(columnDefinition = "json") // Označi stupac kao JSON tip
+    @ColumnTransformer(write = "?::json")
+    private String customPcsJson; // JSON string za pohranu CustomPC liste
 
-    @ManyToMany
-    @JoinTable(
-            name = "offer_has_custom", // Povezujuća tablica
-            joinColumns = @JoinColumn(name = "offer_id"), // Ključ iz offer
-            inverseJoinColumns = @JoinColumn(name = "custompc_id") // Ključ iz pc
-    )
-    private List<CustomPC> customPcs = new ArrayList<>();
+
 
 
 

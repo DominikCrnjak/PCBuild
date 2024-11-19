@@ -11,9 +11,11 @@ public class CreateOfferRequest {
     private String city;
     private String email;
     private String phoneNumber;
+    private String status;
+    private Long price;
 
-    private List<Long> pcIds; // Lista ID-eva gotovih PC-ova
-    private List<CustomPCRequest> customPcs; // Lista komponenti za svaki custom PC
+    private List<PC> pcs; // Lista ID-eva gotovih PC-ova
+    private List<CustomPC> customPcs; // Lista komponenti za svaki custom PC
 
-    // Getters i setters
+
 }
