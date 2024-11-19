@@ -39,11 +39,11 @@ public class OfferResponse {
 
     public OfferResponse(Offer offer, List<CustomPC> customPcs) {
         this.id = offer.getId();
-        this.customer_name = offer.getCustomer_name();
-        this.customer_address = offer.getCustomer_address();
-        this.customer_city = offer.getCustomer_city();
-        this.customer_email = offer.getCustomer_email();
-        this.phone_number = offer.getPhone_number();
+        this.customer_name = offer.getCustomerName();
+        this.customer_address = offer.getCustomerAddress();
+        this.customer_city = offer.getCustomerCity();
+        this.customer_email = offer.getCustomerEmail();
+        this.phone_number = offer.getPhoneNumber();
         this.createDate = offer.getCreateDate();
         this.status = offer.getStatus();
         this.price = offer.getPrice();
@@ -52,19 +52,4 @@ public class OfferResponse {
         this.customPcs = customPcs;
     }
 
-    public Offer toOffer() {
-        Offer offer = new Offer();
-        offer.setId(this.id);
-        offer.setCustomer_name(this.customer_name);
-        offer.setCustomer_address(this.customer_address);
-        offer.setCustomer_city(this.customer_city);
-        offer.setCustomer_email(this.customer_email);
-        offer.setPhone_number(this.phone_number);
-        offer.setCreateDate(this.createDate);
-        offer.setStatus(this.status);
-        offer.setPrice(this.price);
-        offer.setUserId(this.userId);
-        offer.setPcs(this.pcs);
-        return offer;
-    }
 }

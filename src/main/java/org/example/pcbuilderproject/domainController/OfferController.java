@@ -127,11 +127,11 @@ public class OfferController {
 
         // kreiraj novi offer
         Offer offer = new Offer();
-        offer.setCustomer_name(request.getCustomerName());
-        offer.setCustomer_address(request.getCustomerAddress());
-        offer.setCustomer_email(request.getEmail());
-        offer.setCustomer_city(request.getCity());
-        offer.setPhone_number(request.getPhoneNumber());
+        offer.setCustomerName(request.getCustomerName());
+        offer.setCustomerAddress(request.getCustomerAddress());
+        offer.setCustomerEmail(request.getEmail());
+        offer.setCustomerCity(request.getCity());
+        offer.setPhoneNumber(request.getPhoneNumber());
         offer.setPrice(request.getPrice());
         offer.setCreateDate(LocalDate.now().toString()); // automatski postavi datum
         offer.setStatus("pending");
@@ -171,19 +171,19 @@ public class OfferController {
                 .orElseThrow(() -> new RuntimeException("Offer not found"));
 
         if (updatedOfferResponse.getCustomerName() != null) {
-            offer.setCustomer_name(updatedOfferResponse.getCustomerName());
+            offer.setCustomerName(updatedOfferResponse.getCustomerName());
         }
         if (updatedOfferResponse.getCustomerAddress() != null) {
-            offer.setCustomer_address(updatedOfferResponse.getCustomerAddress());
+            offer.setCustomerAddress(updatedOfferResponse.getCustomerAddress());
         }
         if (updatedOfferResponse.getEmail() != null) {
-            offer.setCustomer_email(updatedOfferResponse.getEmail());
+            offer.setCustomerEmail(updatedOfferResponse.getEmail());
         }
         if (updatedOfferResponse.getCity() != null) {
-            offer.setCustomer_city(updatedOfferResponse.getCity());
+            offer.setCustomerCity(updatedOfferResponse.getCity());
         }
         if (updatedOfferResponse.getPhoneNumber() != null) {
-            offer.setPhone_number(updatedOfferResponse.getPhoneNumber());
+            offer.setPhoneNumber(updatedOfferResponse.getPhoneNumber());
         }
         if (updatedOfferResponse.getStatus() != null) {
             offer.setStatus(updatedOfferResponse.getStatus());
