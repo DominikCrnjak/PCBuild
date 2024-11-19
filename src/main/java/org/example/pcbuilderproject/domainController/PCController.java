@@ -56,6 +56,7 @@ public class PCController {
         pc.setStorage(updatedPC.getStorage());
         pc.setCaseEntity(updatedPC.getCaseEntity());
         pc.setPowerSupply(updatedPC.getPowerSupply());
+        pc.setPrice(updatedPC.getPrice());
 
         pcRepository.save(pc);
         return ResponseEntity.ok(pc);
