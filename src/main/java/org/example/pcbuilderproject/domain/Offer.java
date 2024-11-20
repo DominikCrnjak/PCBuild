@@ -18,15 +18,15 @@ public class Offer {
     private Long id;
 
 
-    private String customerName;
+    private String customer_name;
 
-    private String customerAddress;
+    private String customer_address;
 
-    private String customerCity;
+    private String customer_city;
 
-    private String customerEmail;
+    private String customer_email;
 
-    private String phoneNumber;
+    private String phone_number;
 
     private String createDate;
 

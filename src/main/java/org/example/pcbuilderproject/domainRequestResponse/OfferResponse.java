@@ -39,11 +39,11 @@ public class OfferResponse {
 
     public OfferResponse(Offer offer, List<CustomPC> customPcs) {
         this.id = offer.getId();
-        this.customer_name = offer.getCustomerName();
-        this.customer_address = offer.getCustomerAddress();
-        this.customer_city = offer.getCustomerCity();
-        this.customer_email = offer.getCustomerEmail();
-        this.phone_number = offer.getPhoneNumber();
+        this.customer_name = offer.getCustomer_name();
+        this.customer_address = offer.getCustomer_address();
+        this.customer_city = offer.getCustomer_city();
+        this.customer_email = offer.getCustomer_email();
+        this.phone_number = offer.getPhone_number();
         this.createDate = offer.getCreateDate();
         this.status = offer.getStatus();
         this.price = offer.getPrice();

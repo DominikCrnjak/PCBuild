@@ -36,23 +36,25 @@ public class OfferController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<OfferResponse>> getAllOffers() {
+    public ResponseEntity<List<OfferResponse>> getAllOffers() throws JsonProcessingException {
         List<Offer> offers = offerRepository.findAll();
 
         ObjectMapper objectMapper = new ObjectMapper();
         List<OfferResponse> responses = new ArrayList<>();
 
+
+
+
         for (Offer offer : offers) {
+
             List<CustomPC> customPCList = new ArrayList<>();
-            try {
-                if (offer.getCustomPcsJson() != null) {
-                    customPCList = objectMapper.readValue(
-                            offer.getCustomPcsJson(),
-                            new TypeReference<List<CustomPC>>() {}
-                    );
-                }
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Error deserializing custom PCs for offer with ID: " + offer.getId(), e);
+            if (offer.getCustomPcsJson() == null || offer.getCustomPcsJson().isEmpty()) {
+                customPCList = new ArrayList<>();
+            } else {
+                customPCList = objectMapper.readValue(
+                        offer.getCustomPcsJson(),
+                        new TypeReference<List<CustomPC>>() {}
+                );
             }
 
             OfferResponse response = new OfferResponse(offer, customPCList);
@@ -64,19 +66,20 @@ public class OfferController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<OfferResponse> getOfferById(@PathVariable Long id) {
+    public ResponseEntity<OfferResponse> getOfferById(@PathVariable Long id) throws JsonProcessingException {
         Offer offer = offerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Offer not found"));
 
+        List<CustomPC> customPCList = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        List<CustomPC> customPCList;
-        try {
+
+        if (offer.getCustomPcsJson() == null || offer.getCustomPcsJson().isEmpty()) {
+            customPCList = new ArrayList<>();
+        } else {
             customPCList = objectMapper.readValue(
                     offer.getCustomPcsJson(),
                     new TypeReference<List<CustomPC>>() {}
             );
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error deserializing custom PCs", e);
         }
 
         OfferResponse response = new OfferResponse(offer, customPCList);
@@ -84,7 +87,7 @@ public class OfferController {
     }
 
     @GetMapping("/byuser/{userId}")
-    public ResponseEntity<List<OfferResponse>> getOffersByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<OfferResponse>> getOffersByUserId(@PathVariable Long userId) throws JsonProcessingException {
         List<Offer> offers = offerRepository.findAll().stream()
                 .filter(offer -> offer.getUserId().equals(userId)) // Filtriraj prema userId
                 .collect(Collectors.toList());
@@ -94,16 +97,13 @@ public class OfferController {
 
         for (Offer offer : offers) {
             List<CustomPC> customPCList = new ArrayList<>();
-            try {
-                if (offer.getCustomPcsJson() != null) {
-                    customPCList = objectMapper.readValue(
-                            offer.getCustomPcsJson(),
-                            new TypeReference<List<CustomPC>>() {
-                            }
-                    );
-                }
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Error deserializing custom PCs for offer with ID: " + offer.getId(), e);
+            if (offer.getCustomPcsJson() == null || offer.getCustomPcsJson().isEmpty()) {
+                customPCList = new ArrayList<>();
+            } else {
+                customPCList = objectMapper.readValue(
+                        offer.getCustomPcsJson(),
+                        new TypeReference<List<CustomPC>>() {}
+                );
             }
 
             OfferResponse response = new OfferResponse(offer, customPCList);
@@ -125,13 +125,14 @@ public class OfferController {
 
         List<CustomPC> customPcs = new ArrayList<>();
 
+        System.out.println(request);
         // kreiraj novi offer
         Offer offer = new Offer();
-        offer.setCustomerName(request.getCustomerName());
-        offer.setCustomerAddress(request.getCustomerAddress());
-        offer.setCustomerEmail(request.getEmail());
-        offer.setCustomerCity(request.getCity());
-        offer.setPhoneNumber(request.getPhoneNumber());
+        offer.setCustomer_name(request.getCustomerName());
+        offer.setCustomer_address(request.getCustomerAddress());
+        offer.setCustomer_email(request.getEmail());
+        offer.setCustomer_city(request.getCity());
+        offer.setPhone_number(request.getPhoneNumber());
         offer.setPrice(request.getPrice());
         offer.setCreateDate(LocalDate.now().toString()); // automatski postavi datum
         offer.setStatus("pending");
@@ -142,18 +143,27 @@ public class OfferController {
 
         List<CustomPC> customPCList = request.getCustomPcs(); // Lista CustomPC iz requesta
 
+
+
         ObjectMapper objectMapper = new ObjectMapper();
-        String customPcsJson = objectMapper.writeValueAsString(customPCList);
-        System.out.println(customPcsJson);
-
-        offer.setCustomPcsJson(customPcsJson); // Spremi CustomPC listu kao JSON string
-
+        try {
+            for (int i = 0; i < customPCList.size(); i++) {
+                customPCList.get(i).setId((long) i + 1); // Dodijeli ID od 1 nadalje
+            }
+            // Pretvori listu u JSON string
+            String customPcsJson = objectMapper.writeValueAsString(customPCList);
+            offer.setCustomPcsJson(customPcsJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializing custom PCs", e);
+        }
 
 
         offerRepository.save(offer);
 
         OfferResponse response = new OfferResponse(offer, customPCList);
 
+
+        System.out.println(response);
         return ResponseEntity.ok(response);
     }
 
@@ -171,19 +181,19 @@ public class OfferController {
                 .orElseThrow(() -> new RuntimeException("Offer not found"));
 
         if (updatedOfferResponse.getCustomerName() != null) {
-            offer.setCustomerName(updatedOfferResponse.getCustomerName());
+            offer.setCustomer_name(updatedOfferResponse.getCustomerName());
         }
         if (updatedOfferResponse.getCustomerAddress() != null) {
-            offer.setCustomerAddress(updatedOfferResponse.getCustomerAddress());
+            offer.setCustomer_address(updatedOfferResponse.getCustomerAddress());
         }
         if (updatedOfferResponse.getEmail() != null) {
-            offer.setCustomerEmail(updatedOfferResponse.getEmail());
+            offer.setCustomer_email(updatedOfferResponse.getEmail());
         }
         if (updatedOfferResponse.getCity() != null) {
-            offer.setCustomerCity(updatedOfferResponse.getCity());
+            offer.setCustomer_city(updatedOfferResponse.getCity());
         }
         if (updatedOfferResponse.getPhoneNumber() != null) {
-            offer.setPhoneNumber(updatedOfferResponse.getPhoneNumber());
+            offer.setPhone_number(updatedOfferResponse.getPhoneNumber());
         }
         if (updatedOfferResponse.getStatus() != null) {
             offer.setStatus(updatedOfferResponse.getStatus());
@@ -194,37 +204,26 @@ public class OfferController {
         List<PC> pcs = updatedOfferResponse.getPcs();
         offer.setPcs(pcs);
 
+
+        List<CustomPC> customPCList = updatedOfferResponse.getCustomPcs();
         // Pretvori listu CustomPC objekata u JSON string i postavi u Offer
-        if (updatedOfferResponse.getCustomPcs() != null && !updatedOfferResponse.getCustomPcs().isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                String customPcsJson = objectMapper.writeValueAsString(updatedOfferResponse.getCustomPcs());
-                offer.setCustomPcsJson(customPcsJson);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Error serializing custom PCs", e);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            for (int i = 0; i < customPCList.size(); i++) {
+                customPCList.get(i).setId((long) i + 1); // Dodijeli ID od 1 nadalje
             }
-        } else {
-            offer.setCustomPcsJson(null); // Ako nema CustomPC objekata, postavi na null
+            // Pretvori listu u JSON string
+            String customPcsJson = objectMapper.writeValueAsString(customPCList);
+            offer.setCustomPcsJson(customPcsJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializing custom PCs", e);
         }
 
         // Spremi ažurirani Offer u bazu
         Offer savedOffer = offerRepository.save(offer);
 
-        // Transformiraj Offer natrag u OfferResponse za odgovor
-        List<CustomPC> customPCList = new ArrayList<>();
-        try {
-            if (savedOffer.getCustomPcsJson() != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                customPCList = objectMapper.readValue(
-                        savedOffer.getCustomPcsJson(),
-                        new TypeReference<List<CustomPC>>() {}
-                );
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error deserializing custom PCs", e);
-        }
 
-        OfferResponse response = new OfferResponse(savedOffer, customPCList);
+        OfferResponse response = new OfferResponse(savedOffer, updatedOfferResponse.getCustomPcs());
         return ResponseEntity.ok(response);
     }
 
