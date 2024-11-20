@@ -49,7 +49,7 @@ public class AuthenticationService {
                 user.getPhoneNumber(),
                 user.getEmail(),
                 user.getRole().name(),
-                true
+                false
         );
 
         // Kreiraj DTO za sesiju
