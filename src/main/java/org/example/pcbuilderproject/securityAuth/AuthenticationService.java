@@ -98,7 +98,7 @@ public class AuthenticationService {
                 user.getPhoneNumber(),
                 user.getEmail(),
                 user.getRole().name(),
-                false
+                user.getEnabled()
         );
 
         // Kreiraj DTO za sesiju
